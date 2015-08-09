@@ -16,27 +16,27 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string-array name="wallpapers" translatable="false">
-        <item>quartz</item>
-        <item>hexography_blue</item>
-        <item>network</item>
-        <item>hextract</item>
-        <item>heresjohnny</item>
-        <item>hexography_salmon</item>
-        <item>hanksite</item>
-        <item>mauve</item>
-        <item>dystopia</item>
-        <item>theicestorm</item>
-        <item>frostmaple</item>
-        <item>maplebokeh</item>
-        <item>maplesunblaze</item>
-        <item>light_bursting_out</item>
-        <item>bladesplusdroplets</item>
-        <item>decay</item>
-        <item>arc</item>
-        <item>harmony</item>
-        <item>headcase</item>
-        <item>iconoclast</item>
-        <item>slantstyle</item>
+        <item>wallpaper_001</item>
+        <item>wallpaper_002</item>
+        <item>wallpaper_003</item>
+        <item>wallpaper_004</item>
+        <item>wallpaper_005</item>
+        <item>wallpaper_006</item>
+        <item>wallpaper_007</item>
+        <item>wallpaper_008</item>
+        <item>wallpaper_009</item>
+        <item>wallpaper_010</item>
+        <item>wallpaper_011</item>
+        <item>wallpaper_012</item>
+        <item>wallpaper_013</item>
+        <item>wallpaper_014</item>
+        <item>wallpaper_015</item>
+        <item>wallpaper_016</item>
+        <item>wallpaper_017</item>
+        <item>wallpaper_018</item>
+        <item>wallpaper_019</item>
+        <item>wallpaper_020</item>
+        <item>wallpaper_021</item>
     </string-array>
 
     <string-array name="info" translatable="false">

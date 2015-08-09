@@ -19,38 +19,21 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-    <ImageView
-        android:id="@+id/wallpaper"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:adjustViewBounds="true"
-        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:id="@+id/galleryLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
         android:background="@color/gallery_layout_background"
         android:fitsSystemWindows="true">
 
-        <TextView android:id="@+id/info"
+        <GridView android:id="@+id/gallery"
+            android:numColumns="3"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingBottom="15dp" />
+            android:layout_height="fill_parent" />
 
-        <Gallery android:id="@+id/gallery"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-
-        <Button android:id="@+id/set"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/set_wallpaper"
-            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
 
