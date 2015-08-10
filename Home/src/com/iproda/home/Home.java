@@ -19,7 +19,6 @@ package com.iproda.home;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -40,13 +39,11 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.UserHandle;
 import android.util.Log;
 import android.util.Xml;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -56,9 +53,9 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -118,10 +115,7 @@ public class Home extends Activity implements OnClickListener {
 	private boolean mHomeDown;
 	private boolean mBackDown;
 
-	private View mShowApplications;
-	private CheckBox mShowApplicationsCheck;
-
-	private ApplicationsStackLayout mApplicationsStack;
+	// private View mShowApplications;
 
 	private Animation mGridEntry;
 	private Animation mGridExit;
@@ -161,10 +155,8 @@ public class Home extends Activity implements OnClickListener {
 		buttonSettings = (ImageButton) findViewById(R.id.imageButtonSettings);
 		buttonSettings.setOnClickListener(this);
 
-		getWindow()
-				.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-		getWindow().addFlags(
-				WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 	}
 
 	@Override
@@ -172,6 +164,7 @@ public class Home extends Activity implements OnClickListener {
 		switch (arg0.getId()) {
 
 		case R.id.imageButtonApp:
+			showApplications(true);
 			break;
 		case R.id.imageButtonCol:
 			startWallpaperColActivity();
@@ -189,8 +182,7 @@ public class Home extends Activity implements OnClickListener {
 
 	private void startSettingsActivity() {
 		Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		try {
 			this.startActivity(intent);
 		} catch (Exception ex) {
@@ -201,8 +193,7 @@ public class Home extends Activity implements OnClickListener {
 
 	private void startWallpaperColActivity() {
 		Intent intent = new Intent("com.iproda.wallpapers.WALLPAPER_COL");
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-				| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		try {
 			this.startActivity(intent);
 		} catch (Exception ex) {
@@ -254,8 +245,7 @@ public class Home extends Activity implements OnClickListener {
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putBoolean(KEY_SAVE_GRID_OPENED,
-				mGrid.getVisibility() == View.VISIBLE);
+		outState.putBoolean(KEY_SAVE_GRID_OPENED, mGrid.getVisibility() == View.VISIBLE);
 	}
 
 	/**
@@ -284,18 +274,12 @@ public class Home extends Activity implements OnClickListener {
 		mGrid.setAdapter(new ApplicationsAdapter(this, mApplications));
 		mGrid.setSelection(0);
 
-		if (mApplicationsStack == null) {
-			mApplicationsStack = (ApplicationsStackLayout) findViewById(R.id.faves_and_recents);
-		}
 	}
 
 	/**
 	 * Binds actions to the various buttons.
 	 */
 	private void bindButtons() {
-		mShowApplications = findViewById(R.id.show_all_apps);
-		mShowApplications.setOnClickListener(new ShowApplications());
-		mShowApplicationsCheck = (CheckBox) findViewById(R.id.show_all_apps_check);
 
 		mGrid.setOnItemClickListener(new ApplicationLauncher());
 	}
@@ -313,8 +297,7 @@ public class Home extends Activity implements OnClickListener {
 					Log.e(LOG_TAG, "Failed to clear wallpaper " + e);
 				}
 			} else {
-				getWindow().setBackgroundDrawable(
-						new ClippedDrawable(wallpaper));
+				getWindow().setBackgroundDrawable(new ClippedDrawable(wallpaper));
 			}
 			mWallpaperChecked = true;
 		}
@@ -332,19 +315,16 @@ public class Home extends Activity implements OnClickListener {
 			} else {
 				mFavorites.clear();
 			}
-			mApplicationsStack.setFavorites(mFavorites);
 
 			FileReader favReader;
 
 			// Environment.getRootDirectory() is a fancy way of saying
 			// ANDROID_ROOT or "/system".
-			final File favFile = new File(Environment.getRootDirectory(),
-					DEFAULT_FAVORITES_PATH);
+			final File favFile = new File(Environment.getRootDirectory(), DEFAULT_FAVORITES_PATH);
 			try {
 				favReader = new FileReader(favFile);
 			} catch (FileNotFoundException e) {
-				Log.e(LOG_TAG, "Couldn't find or open favorites file "
-						+ favFile);
+				Log.e(LOG_TAG, "Couldn't find or open favorites file " + favFile);
 				return;
 			}
 
@@ -369,13 +349,10 @@ public class Home extends Activity implements OnClickListener {
 						break;
 					}
 
-					final String favoritePackage = parser.getAttributeValue(
-							null, TAG_PACKAGE);
-					final String favoriteClass = parser.getAttributeValue(null,
-							TAG_CLASS);
+					final String favoritePackage = parser.getAttributeValue(null, TAG_PACKAGE);
+					final String favoriteClass = parser.getAttributeValue(null, TAG_CLASS);
 
-					final ComponentName cn = new ComponentName(favoritePackage,
-							favoriteClass);
+					final ComponentName cn = new ComponentName(favoritePackage, favoriteClass);
 					intent.setComponent(cn);
 					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -392,15 +369,13 @@ public class Home extends Activity implements OnClickListener {
 			}
 		}
 
-		mApplicationsStack.setFavorites(mFavorites);
 	}
 
-	private static void beginDocument(XmlPullParser parser,
-			String firstElementName) throws XmlPullParserException, IOException {
+	private static void beginDocument(XmlPullParser parser, String firstElementName)
+			throws XmlPullParserException, IOException {
 
 		int type;
-		while ((type = parser.next()) != XmlPullParser.START_TAG
-				&& type != XmlPullParser.END_DOCUMENT) {
+		while ((type = parser.next()) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
 			// Empty
 		}
 
@@ -409,16 +384,14 @@ public class Home extends Activity implements OnClickListener {
 		}
 
 		if (!parser.getName().equals(firstElementName)) {
-			throw new XmlPullParserException("Unexpected start tag: found "
-					+ parser.getName() + ", expected " + firstElementName);
+			throw new XmlPullParserException(
+					"Unexpected start tag: found " + parser.getName() + ", expected " + firstElementName);
 		}
 	}
 
-	private static void nextElement(XmlPullParser parser)
-			throws XmlPullParserException, IOException {
+	private static void nextElement(XmlPullParser parser) throws XmlPullParserException, IOException {
 		int type;
-		while ((type = parser.next()) != XmlPullParser.START_TAG
-				&& type != XmlPullParser.END_DOCUMENT) {
+		while ((type = parser.next()) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
 			// Empty
 		}
 	}
@@ -430,8 +403,7 @@ public class Home extends Activity implements OnClickListener {
 	private void bindRecents() {
 		final PackageManager manager = getPackageManager();
 		final ActivityManager tasksManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-		final List<ActivityManager.RecentTaskInfo> recentTasks = tasksManager
-				.getRecentTasks(MAX_RECENT_TASKS, 0);
+		final List<ActivityManager.RecentTaskInfo> recentTasks = tasksManager.getRecentTasks(MAX_RECENT_TASKS, 0);
 
 		final int count = recentTasks.size();
 		final ArrayList<ApplicationInfo> recents = new ArrayList<ApplicationInfo>();
@@ -439,8 +411,7 @@ public class Home extends Activity implements OnClickListener {
 		for (int i = count - 1; i >= 0; i--) {
 			final Intent intent = recentTasks.get(i).baseIntent;
 
-			if (Intent.ACTION_MAIN.equals(intent.getAction())
-					&& !intent.hasCategory(Intent.CATEGORY_HOME)) {
+			if (Intent.ACTION_MAIN.equals(intent.getAction()) && !intent.hasCategory(Intent.CATEGORY_HOME)) {
 
 				ApplicationInfo info = getApplicationInfo(manager, intent);
 				if (info != null) {
@@ -452,11 +423,9 @@ public class Home extends Activity implements OnClickListener {
 			}
 		}
 
-		mApplicationsStack.setRecents(recents);
 	}
 
-	private static ApplicationInfo getApplicationInfo(PackageManager manager,
-			Intent intent) {
+	private static ApplicationInfo getApplicationInfo(PackageManager manager, Intent intent) {
 		final ResolveInfo resolveInfo = manager.resolveActivity(intent, 0);
 
 		if (resolveInfo == null) {
@@ -490,8 +459,10 @@ public class Home extends Activity implements OnClickListener {
 			switch (event.getKeyCode()) {
 			case KeyEvent.KEYCODE_BACK:
 				mBackDown = true;
+				hideApplications();
 				return true;
 			case KeyEvent.KEYCODE_HOME:
+				hideApplications();
 				mHomeDown = true;
 				return true;
 			}
@@ -508,6 +479,7 @@ public class Home extends Activity implements OnClickListener {
 					// Do HOME behavior.
 				}
 				mHomeDown = true;
+				// hideApplications();
 				return true;
 			}
 		}
@@ -528,8 +500,7 @@ public class Home extends Activity implements OnClickListener {
 		Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
 		mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
-		final List<ResolveInfo> apps = manager.queryIntentActivities(
-				mainIntent, 0);
+		final List<ResolveInfo> apps = manager.queryIntentActivities(mainIntent, 0);
 		Collections.sort(apps, new ResolveInfo.DisplayNameComparator(manager));
 
 		if (apps != null) {
@@ -545,10 +516,9 @@ public class Home extends Activity implements OnClickListener {
 				ResolveInfo info = apps.get(i);
 
 				application.title = info.loadLabel(manager);
-				application.setActivity(new ComponentName(
-						info.activityInfo.applicationInfo.packageName,
-						info.activityInfo.name), Intent.FLAG_ACTIVITY_NEW_TASK
-						| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+				application.setActivity(
+						new ComponentName(info.activityInfo.applicationInfo.packageName, info.activityInfo.name),
+						Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 				application.icon = info.activityInfo.loadIcon(manager);
 
 				mApplications.add(application);
@@ -565,13 +535,14 @@ public class Home extends Activity implements OnClickListener {
 		}
 		mBlockAnimation = true;
 
-		mShowApplicationsCheck.toggle();
-
 		if (mShowLayoutAnimation == null) {
-			mShowLayoutAnimation = AnimationUtils.loadLayoutAnimation(this,
-					R.anim.show_applications);
+			mShowLayoutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.show_applications);
 		}
+		LinearLayout layoutMain = (LinearLayout) findViewById(R.id.layout_main);
+		if (layoutMain != null) {
 
+			layoutMain.setVisibility(View.GONE);
+		}
 		// This enables a layout animation; if you uncomment this code, you need
 		// to
 		// comment the line mGrid.startAnimation() below
@@ -602,17 +573,19 @@ public class Home extends Activity implements OnClickListener {
 		}
 		mBlockAnimation = true;
 
-		mShowApplicationsCheck.toggle();
-
 		if (mHideLayoutAnimation == null) {
-			mHideLayoutAnimation = AnimationUtils.loadLayoutAnimation(this,
-					R.anim.hide_applications);
+			mHideLayoutAnimation = AnimationUtils.loadLayoutAnimation(this, R.anim.hide_applications);
+		}
+		LinearLayout layoutMain = (LinearLayout) findViewById(R.id.layout_main);
+		if (layoutMain != null) {
+
+			layoutMain.setVisibility(View.VISIBLE);
 		}
 
 		mGridExit.setAnimationListener(new HideGrid());
 		mGrid.startAnimation(mGridExit);
 		mGrid.setVisibility(View.INVISIBLE);
-		mShowApplications.requestFocus();
+		// mShowApplications.requestFocus();
 
 		// This enables a layout animation; if you uncomment this code, you need
 		// to
@@ -628,8 +601,7 @@ public class Home extends Activity implements OnClickListener {
 	private class WallpaperIntentReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			getWindow().setBackgroundDrawable(
-					new ClippedDrawable(getWallpaper()));
+			getWindow().setBackgroundDrawable(new ClippedDrawable(getWallpaper()));
 		}
 	}
 
@@ -652,8 +624,7 @@ public class Home extends Activity implements OnClickListener {
 	private class ApplicationsAdapter extends ArrayAdapter<ApplicationInfo> {
 		private Rect mOldBounds = new Rect();
 
-		public ApplicationsAdapter(Context context,
-				ArrayList<ApplicationInfo> apps) {
+		public ApplicationsAdapter(Context context, ArrayList<ApplicationInfo> apps) {
 			super(context, 0, apps);
 		}
 
@@ -663,8 +634,7 @@ public class Home extends Activity implements OnClickListener {
 
 			if (convertView == null) {
 				final LayoutInflater inflater = getLayoutInflater();
-				convertView = inflater.inflate(R.layout.application, parent,
-						false);
+				convertView = inflater.inflate(R.layout.application, parent, false);
 			}
 
 			Drawable icon = info.icon;
@@ -685,8 +655,7 @@ public class Home extends Activity implements OnClickListener {
 					painter.setIntrinsicHeight(height);
 				}
 
-				if (width > 0 && height > 0
-						&& (width < iconWidth || height < iconHeight)) {
+				if (width > 0 && height > 0 && (width < iconWidth || height < iconHeight)) {
 					final float ratio = (float) iconWidth / iconHeight;
 
 					if (iconWidth > iconHeight) {
@@ -699,8 +668,7 @@ public class Home extends Activity implements OnClickListener {
 							: Bitmap.Config.RGB_565;
 					final Bitmap thumb = Bitmap.createBitmap(width, height, c);
 					final Canvas canvas = new Canvas(thumb);
-					canvas.setDrawFilter(new PaintFlagsDrawFilter(
-							Paint.DITHER_FLAG, 0));
+					canvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.DITHER_FLAG, 0));
 					// Copy the old bounds to restore them later
 					// If we were to do oldBounds = icon.getBounds(),
 					// the call to setBounds() that follows would
@@ -715,40 +683,30 @@ public class Home extends Activity implements OnClickListener {
 				}
 			}
 
-			final TextView textView = (TextView) convertView
-					.findViewById(R.id.label);
-			textView.setCompoundDrawablesWithIntrinsicBounds(null, icon, null,
-					null);
+			final TextView textView = (TextView) convertView.findViewById(R.id.label);
+			textView.setCompoundDrawablesWithIntrinsicBounds(null, icon, null, null);
 			textView.setText(info.title);
 
 			return convertView;
 		}
 	}
 
-	/**
-	 * Shows and hides the applications grid view.
-	 */
-	private class ShowApplications implements View.OnClickListener {
-		public void onClick(View v) {
-			if (mGrid.getVisibility() != View.VISIBLE) {
-				showApplications(true);
-			} else {
-				hideApplications();
-			}
-		}
-	}
+
 
 	/**
 	 * Hides the applications grid when the layout animation is over.
 	 */
 	private class HideGrid implements Animation.AnimationListener {
+		@Override
 		public void onAnimationStart(Animation animation) {
 		}
 
+		@Override
 		public void onAnimationEnd(Animation animation) {
 			mBlockAnimation = false;
 		}
 
+		@Override
 		public void onAnimationRepeat(Animation animation) {
 		}
 	}
@@ -757,14 +715,17 @@ public class Home extends Activity implements OnClickListener {
 	 * Shows the applications grid when the layout animation is over.
 	 */
 	private class ShowGrid implements Animation.AnimationListener {
+		@Override
 		public void onAnimationStart(Animation animation) {
 		}
 
+		@Override
 		public void onAnimationEnd(Animation animation) {
 			mBlockAnimation = false;
 			// ViewDebug.stopHierarchyTracing();
 		}
 
+		@Override
 		public void onAnimationRepeat(Animation animation) {
 		}
 	}
@@ -772,12 +733,10 @@ public class Home extends Activity implements OnClickListener {
 	/**
 	 * Starts the selected activity/application in the grid view.
 	 */
-	private class ApplicationLauncher implements
-			AdapterView.OnItemClickListener {
-		public void onItemClick(AdapterView parent, View v, int position,
-				long id) {
-			ApplicationInfo app = (ApplicationInfo) parent
-					.getItemAtPosition(position);
+	private class ApplicationLauncher implements AdapterView.OnItemClickListener {
+		@Override
+		public void onItemClick(AdapterView parent, View v, int position, long id) {
+			ApplicationInfo app = (ApplicationInfo) parent.getItemAtPosition(position);
 			startActivity(app.intent);
 		}
 	}
@@ -806,23 +765,26 @@ public class Home extends Activity implements OnClickListener {
 			// Ensure the wallpaper is as large as it really is, to avoid
 			// stretching it
 			// at drawing time
-			mWallpaper.setBounds(left, top,
-					left + mWallpaper.getIntrinsicWidth(),
+			mWallpaper.setBounds(left, top, left + mWallpaper.getIntrinsicWidth(),
 					top + mWallpaper.getIntrinsicHeight());
 		}
 
+		@Override
 		public void draw(Canvas canvas) {
 			mWallpaper.draw(canvas);
 		}
 
+		@Override
 		public void setAlpha(int alpha) {
 			mWallpaper.setAlpha(alpha);
 		}
 
+		@Override
 		public void setColorFilter(ColorFilter cf) {
 			mWallpaper.setColorFilter(cf);
 		}
 
+		@Override
 		public int getOpacity() {
 			return mWallpaper.getOpacity();
 		}
