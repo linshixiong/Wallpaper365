@@ -14,10 +14,8 @@
      limitations under the License.
 -->
 
-<resources>
-    <!-- Home -->
-    <string name="home_title">Home</string>
-    <string name="show_all_apps">All</string>
-
-</resources>
-
+<gridLayoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+        android:rowDelay="25%"
+        android:directionPriority="column"
+        android:direction="right_to_left|bottom_to_top"
+        android:animation="@anim/fade_in" />
