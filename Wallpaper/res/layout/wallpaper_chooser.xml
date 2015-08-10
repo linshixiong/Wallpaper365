@@ -17,29 +17,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-
+    android:layout_height="fill_parent" >
 
     <LinearLayout
         android:id="@+id/galleryLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:background="@color/gallery_layout_background"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:orientation="vertical" >
 
-        <GridView android:id="@+id/gallery"
+        <GridView
+            android:id="@+id/gallery"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="fill_vertical|fill_horizontal"
+            android:horizontalSpacing="5px"
             android:numColumns="4"
-      		android:layout_width="fill_parent"
-      		android:layout_height="fill_parent"   
-      		android:horizontalSpacing="5px"    
-      		android:stretchMode="columnWidth" 
-     		 android:gravity="fill_vertical|fill_horizontal"  
-     		 android:verticalSpacing="4px"/>
-    
-
-
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="14px" />
     </LinearLayout>
 
 </RelativeLayout>
