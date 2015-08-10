@@ -30,9 +30,14 @@
         android:fitsSystemWindows="true">
 
         <GridView android:id="@+id/gallery"
-            android:numColumns="3"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:numColumns="4"
+      		android:layout_width="fill_parent"
+      		android:layout_height="fill_parent"   
+      		android:horizontalSpacing="5px"    
+      		android:stretchMode="columnWidth" 
+     		 android:gravity="fill_vertical|fill_horizontal"  
+     		 android:verticalSpacing="4px"/>
+    
 
 
     </LinearLayout>

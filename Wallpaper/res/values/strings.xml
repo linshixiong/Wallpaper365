@@ -29,4 +29,9 @@
 
     <!-- Wallpaper -->
     <string name="wallpaper_instructions">Tap picture to set portrait wallpaper</string>
+    
+    
+    <declare-styleable name="Gallery">
+	    <attr name="android:galleryItemBackground" />
+	</declare-styleable>
 </resources>

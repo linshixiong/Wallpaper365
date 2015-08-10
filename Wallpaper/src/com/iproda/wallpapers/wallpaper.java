@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -59,7 +60,7 @@ public class wallpaper extends Activity implements AdapterView.OnItemSelectedLis
    // private boolean mIsWallpaperSet;
     private  WallpaperHelper helper;
     private Bitmap mBitmap;
-
+	private int mGalleryItemBackground;
     private WallpaperLoader mLoader;
 
 
@@ -84,7 +85,10 @@ public class wallpaper extends Activity implements AdapterView.OnItemSelectedLis
         //mGallery.setCallbackDuringFling(false);
         //mGallery.setUnselectedAlpha(0.3f);
         //mGallery.setSpacing(getResources().getDimensionPixelSize(R.dimen.gallery_spacing));
-
+        TypedArray a = this 
+                .obtainStyledAttributes(R.styleable.Gallery);
+		mGalleryItemBackground = a.getResourceId(
+		        R.styleable.Gallery_android_galleryItemBackground, 1);
       
         Intent service =new Intent();
         service.setClass(this, WallpaperService.class);
@@ -153,6 +157,13 @@ public class wallpaper extends Activity implements AdapterView.OnItemSelectedLis
             
             int thumbRes = helper.getThumbs().get(position);
             image.setImageResource(thumbRes);
+
+            //image.setAdjustViewBounds(false);
+	
+           // image.setScaleType(ImageView.ScaleType.FIT_XY);
+
+            image.setBackgroundResource(mGalleryItemBackground);
+            
             Drawable thumbDrawable = image.getDrawable();
             if (thumbDrawable != null) {
                 thumbDrawable.setDither(true);
