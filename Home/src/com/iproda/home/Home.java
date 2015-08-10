@@ -48,6 +48,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
@@ -143,6 +144,9 @@ public class Home extends Activity {
 
         mGridEntry = AnimationUtils.loadAnimation(this, R.anim.grid_entry);
         mGridExit = AnimationUtils.loadAnimation(this, R.anim.grid_exit);
+        
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
     }
 
     @Override
