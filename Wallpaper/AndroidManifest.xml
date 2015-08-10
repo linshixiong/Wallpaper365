@@ -19,8 +19,7 @@
                 
                 <category android:name="android.intent.category.DEFAULT" />
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="com.iproda.wallpapers.WALLPAPER_COL" />
             </intent-filter>
         </activity>
         <service android:name="com.iproda.wallpapers.WallpaperService"></service>
