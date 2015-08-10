@@ -19,14 +19,14 @@
     xmlns:home="http://schemas.android.com/apk/res/com.iproda.home"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:gravity="center|center_horizontal|center_vertical">
+    android:gravity="center|center_horizontal|center_vertical"
+    android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" 
-        android:gravity="center|center_horizontal|center_vertical">
+        android:gravity="center|center_horizontal|center_vertical"
+        android:orientation="horizontal" >
 
         <ImageButton
             android:id="@+id/imageButtonNavi"
@@ -47,6 +47,19 @@
             android:background="@drawable/button_app" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|center_horizontal|center_vertical"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/imageButtonSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_settings"/>
+        
+    </LinearLayout>
     <!-- All applications on the top side of the screen -->
 
     <GridView
@@ -74,9 +87,9 @@
         android:layout_height="65dip"
         android:layout_marginTop="0dip"
         android:background="@drawable/application_background"
+        android:visibility="gone"
         home:marginLeft="1dip"
         home:marginRight="1dip"
-        home:stackOrientation="horizontal"
-         android:visibility="gone"  />
+        home:stackOrientation="horizontal" />
 
 </LinearLayout>
