@@ -99,9 +99,9 @@ public class WallpaperList extends Activity implements
 		// mGalleryItemBackground = a.getResourceId(
 		// R.styleable.Gallery_android_galleryItemBackground, 1);
 
-		// Intent service =new Intent();
-		// service.setClass(this, WallpaperService.class);
-		// this.startService(service);
+		 Intent service =new Intent();
+		 service.setClass(this, WallpaperService.class);
+		 this.startService(service);
 
 	}
 
