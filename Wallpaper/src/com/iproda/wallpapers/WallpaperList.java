@@ -164,7 +164,7 @@ public class WallpaperList extends Activity implements
 		}
 
 		public int getCount() {
-			return helper.getThumbs().size();
+			return WallpaperSettings.getWallpaperCollectionCount(WallpaperList.this);
 		}
 
 		public Object getItem(int position) {

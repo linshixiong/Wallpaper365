@@ -50,12 +50,14 @@ public class WallpaperHelper {
 	}
 	
     private void findWallpapers() {
-        mThumbs = new ArrayList<Integer>(24);
-        mImages = new ArrayList<Integer>(24);
+
 
         final Resources resources = mContext.getResources();
         final String packageName = mContext.getApplicationContext().getPackageName();
-
+        final int arrayLength=resources.getStringArray( R.array.wallpapers).length;
+        mThumbs = new ArrayList<Integer>(arrayLength);
+        mImages = new ArrayList<Integer>(arrayLength);
+        
         addWallpapers(resources, packageName, R.array.wallpapers);
        // addWallpapers(resources, packageName, R.array.extra_wallpapers);
     }

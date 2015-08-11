@@ -12,6 +12,11 @@ public class WallpaperSettings {
 	public static void setWallpaperPosition(Context context, int position) {
 		Settings.System.putInt(context.getContentResolver(), "com.iproda.wallpapers.WALLPAPER_POSITION", position);
 
+		int collectionCount=getWallpaperCollectionCount(context);
+		
+		if(collectionCount<context.getResources().getStringArray(R.array.wallpapers).length){
+			Settings.System.putInt(context.getContentResolver(), "com.iproda.wallpapers.WALLPAPER_COL_COUNT", position);
+		}
 	}
 
 	public static boolean isWallpaperChangerOn(Context context) {
@@ -19,9 +24,16 @@ public class WallpaperSettings {
 				1) == 1;
 
 	}
+	
+	
 
 	public static void setWallpaperChangerOn(Context context, boolean on) {
 		Settings.System.putInt(context.getContentResolver(), "com.iproda.wallpapers.WALLPAPER_CHANGER_ON", on ? 1 : 0);
 
 	}
+	
+	public static int getWallpaperCollectionCount(Context context) {
+		return Settings.System.getInt(context.getContentResolver(), "com.iproda.wallpapers.WALLPAPER_COL_COUNT", 0);
+	}
+
 }
