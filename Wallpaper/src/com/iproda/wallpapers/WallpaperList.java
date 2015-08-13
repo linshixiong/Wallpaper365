@@ -17,17 +17,9 @@
 package com.iproda.wallpapers;
 
 import android.app.Activity;
-import android.app.WallpaperManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.AsyncTask;
@@ -38,17 +30,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.View.OnClickListener;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Gallery;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import com.iproda.wallpapers.R;
 
@@ -69,15 +55,7 @@ public class WallpaperList extends Activity implements
 
 		helper = new WallpaperHelper(this);
 
-		/*
-		Window w = getWindow();
-		w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION,
-				WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-		w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-				WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-		*/
-
-		setContentView(R.layout.wallpaper_chooser);
+		setContentView(R.layout.wallpaper);
 
 		mGallery = (GridView) findViewById(R.id.gallery);
 		mGallery.setAdapter(new ImageAdapter(this));
@@ -91,17 +69,6 @@ public class WallpaperList extends Activity implements
 						Toast.LENGTH_SHORT).show();
 			}
 		});
-		// mGallery.setCallbackDuringFling(false);
-		// mGallery.setUnselectedAlpha(0.3f);
-		// mGallery.setSpacing(getResources().getDimensionPixelSize(R.dimen.gallery_spacing));
-		// TypedArray a = this
-		// .obtainStyledAttributes(R.styleable.Gallery);
-		// mGalleryItemBackground = a.getResourceId(
-		// R.styleable.Gallery_android_galleryItemBackground, 1);
-
-		 Intent service =new Intent();
-		 service.setClass(this, WallpaperService.class);
-		 this.startService(service);
 
 	}
 
@@ -114,9 +81,6 @@ public class WallpaperList extends Activity implements
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 
 		return super.onOptionsItemSelected(item);
@@ -125,7 +89,6 @@ public class WallpaperList extends Activity implements
 	@Override
 	protected void onResume() {
 		super.onResume();
-		// mIsWallpaperSet = false;
 	}
 
 	@Override
@@ -138,17 +101,6 @@ public class WallpaperList extends Activity implements
 			mLoader = null;
 		}
 	}
-
-	/*
-	 * public void onItemSelected(AdapterView parent, View v, int position, long
-	 * id) {
-	 * 
-	 * Toast.makeText(this, "onItemSelected:+"+position,
-	 * Toast.LENGTH_SHORT).show(); Intent intent=new Intent();
-	 * intent.setClass(this, WallpaperItem.class); startActivity(intent);
-	 * 
-	 * }
-	 */
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -163,18 +115,23 @@ public class WallpaperList extends Activity implements
 			mLayoutInflater = context.getLayoutInflater();
 		}
 
+		@Override
 		public int getCount() {
-			return WallpaperSettings.getWallpaperCollectionCount(WallpaperList.this);
+			return WallpaperSettings
+					.getWallpaperCollectionCount(WallpaperList.this);
 		}
 
+		@Override
 		public Object getItem(int position) {
 			return position;
 		}
 
+		@Override
 		public long getItemId(int position) {
 			return position;
 		}
 
+		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ImageView image;
 
@@ -215,6 +172,7 @@ public class WallpaperList extends Activity implements
 			mOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
 		}
 
+		@Override
 		protected Bitmap doInBackground(Integer... params) {
 			if (isCancelled())
 				return null;

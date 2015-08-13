@@ -27,16 +27,12 @@ public class WallpaperService extends Service {
 
 	@Override
 	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void onCreate() {
-		// TODO Auto-generated method stub
-
 		filter.addAction(Intent.ACTION_SCREEN_ON);
-		// filter.addAction(Intent.ACTION_DATE_CHANGED);
 		filter.addAction(Intent.ACTION_TIME_TICK);
 		registerReceiver(receiver, filter);
 		helper = new WallpaperHelper(this);
@@ -45,13 +41,12 @@ public class WallpaperService extends Service {
 
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		// TODO Auto-generated method stub
+		flags = START_STICKY;
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -74,19 +69,21 @@ public class WallpaperService extends Service {
 
 			if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
 				updateTime();
-				//if (hour == 0 && minute == 0) {
+				// if (hour == 0 && minute == 0) {
 
-					mPosition=WallpaperSettings.getWallpaperPosition(WallpaperService.this);
-					helper.selectWallpaper(mPosition);
+				mPosition = WallpaperSettings
+						.getWallpaperPosition(WallpaperService.this);
+				helper.selectWallpaper(mPosition);
 
-					if (mPosition < helper.getImages().size() - 1) {
-						mPosition++;
+				if (mPosition < helper.getImages().size() - 1) {
+					mPosition++;
 
-					} else {
-						mPosition = 0;
-					}
-					WallpaperSettings.setWallpaperPosition(WallpaperService.this, mPosition);
-				//}
+				} else {
+					mPosition = 0;
+				}
+				WallpaperSettings.setWallpaperPosition(WallpaperService.this,
+						mPosition);
+				// }
 
 			}
 		}
