@@ -1,6 +1,8 @@
 package com.iproda.wallpapers;
 
-import java.util.Calendar;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -9,21 +11,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
 import android.text.format.Time;
-import android.widget.Toast;
+import android.util.Log;
 
 public class WallpaperService extends Service {
+
+	private static final String TAG = "WallpaperService";
 
 	private final IntentFilter filter = new IntentFilter();
 
 	private WallpaperHelper helper;
 
 	private int mPosition = 0;
-	private int year;
-	private int month;
-	private int day;
 	private int hour;
 	private int minute;
-	private int second;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -36,30 +36,32 @@ public class WallpaperService extends Service {
 		filter.addAction(Intent.ACTION_TIME_TICK);
 		registerReceiver(receiver, filter);
 		helper = new WallpaperHelper(this);
+
+		Log.d(TAG, "onCreate");
 		super.onCreate();
 	}
 
 	@Override
 	public void onDestroy() {
+
+		Intent service = new Intent("com.iproda.wallpapers.WALLPAPER_SERVICE");
+		startService(service);
 		super.onDestroy();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		flags = START_STICKY;
+		updateTime();
+		setWallpaper();
 		return super.onStartCommand(intent, flags, startId);
 	}
 
 	private void updateTime() {
 		Time t = new Time();
-		t.setToNow(); // 取得系统时间。
-		year = t.year;
-		month = t.month;
-		day = t.monthDay;
-		hour = t.hour; // 0-23
+		t.setToNow();
+		hour = t.hour;
 		minute = t.minute;
-		second = t.second;
-
 	}
 
 	private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -69,25 +71,65 @@ public class WallpaperService extends Service {
 
 			if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
 				updateTime();
-				// if (hour == 0 && minute == 0) {
-
-				mPosition = WallpaperSettings
-						.getWallpaperPosition(WallpaperService.this);
-				helper.selectWallpaper(mPosition);
-
-				if (mPosition < helper.getImages().size() - 1) {
-					mPosition++;
-
-				} else {
-					mPosition = 0;
+				if (hour == 0 && minute == 0) {
+					setWallpaper();
 				}
-				WallpaperSettings.setWallpaperPosition(WallpaperService.this,
-						mPosition);
-				// }
 
 			}
 		}
 
 	};
+
+	private void setWallpaper() {
+
+		if (needUpdateWallpaper()) {
+
+			mPosition = WallpaperSettings
+					.getWallpaperPosition(WallpaperService.this);
+			helper.selectWallpaper(mPosition);
+
+			if (mPosition < helper.getImages().size() - 1) {
+				mPosition++;
+
+			} else {
+				mPosition = 0;
+			}
+			WallpaperSettings.setWallpaperPosition(WallpaperService.this,
+					mPosition);
+			WallpaperSettings
+					.refreshLastWallpaperUpdateTime(WallpaperService.this);
+		}
+
+	}
+
+	public boolean needUpdateWallpaper() {
+		String lastUpdateTime = WallpaperSettings
+				.getLastWallpaperUpdateTime(WallpaperService.this);
+		if (lastUpdateTime != null && !"".equals(lastUpdateTime)) {
+
+			SimpleDateFormat formatter = new SimpleDateFormat(
+					"yyyy-MM-dd HH:mm:ss");
+			Date lastDate = null;
+			try {
+				lastDate = formatter.parse(lastUpdateTime);
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return false;
+			}
+			Date nowDate = new Date(System.currentTimeMillis());
+			//long diff = nowDate.getTime() - lastDate.getTime();
+			//long days = diff / (1000 * 60 * 60 * 24);
+
+			if (nowDate.getYear() > lastDate.getYear()
+					|| nowDate.getMonth() > lastDate.getMonth()
+					|| nowDate.getDate() > lastDate.getDate()) {
+				return true;
+			}
+			return false;
+
+		} else {
+			return true;
+		}
+	}
 
 }

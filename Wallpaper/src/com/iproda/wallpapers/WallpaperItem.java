@@ -9,7 +9,6 @@ public class WallpaperItem extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
-		ViewFlipper v=null;
 		
 		
 		super.onCreate(savedInstanceState);
