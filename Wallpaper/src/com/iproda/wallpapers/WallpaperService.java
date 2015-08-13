@@ -1,29 +1,27 @@
 package com.iproda.wallpapers;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.TimeZone;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-import android.text.format.Time;
 import android.util.Log;
 
 public class WallpaperService extends Service {
 
 	private static final String TAG = "WallpaperService";
-
+	public static final String ACTION_ALARM_WAKEUP = "com.iproda.wallpapers.ACTION_ALARM_WAKEUP";
 	private final IntentFilter filter = new IntentFilter();
 
 	private WallpaperHelper helper;
 
 	private int mPosition = 0;
-	private int hour;
-	private int minute;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -33,7 +31,7 @@ public class WallpaperService extends Service {
 	@Override
 	public void onCreate() {
 		filter.addAction(Intent.ACTION_SCREEN_ON);
-		filter.addAction(Intent.ACTION_TIME_TICK);
+		filter.addAction(ACTION_ALARM_WAKEUP);
 		registerReceiver(receiver, filter);
 		helper = new WallpaperHelper(this);
 
@@ -52,16 +50,28 @@ public class WallpaperService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		flags = START_STICKY;
-		updateTime();
-		setWallpaper();
+		setAlarm();
 		return super.onStartCommand(intent, flags, startId);
 	}
 
-	private void updateTime() {
-		Time t = new Time();
-		t.setToNow();
-		hour = t.hour;
-		minute = t.minute;
+	private void setAlarm() {
+		Intent intent = new Intent(ACTION_ALARM_WAKEUP);
+		PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent,
+				PendingIntent.FLAG_CANCEL_CURRENT);
+
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTimeInMillis(System.currentTimeMillis());
+		calendar.setTimeZone(TimeZone.getDefault());
+		calendar.set(Calendar.MINUTE, 0);
+		calendar.set(Calendar.HOUR_OF_DAY, 0);
+		calendar.set(Calendar.SECOND, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
+		calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+		AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+		manager.setRepeating(AlarmManager.RTC_WAKEUP,
+				calendar.getTimeInMillis(), 1000 * 60 * 60 * 24, sender);
+
 	}
 
 	private final BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -69,12 +79,8 @@ public class WallpaperService extends Service {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
 
-			if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
-				updateTime();
-				if (hour == 0 && minute == 0) {
-					setWallpaper();
-				}
-
+			if (WallpaperService.ACTION_ALARM_WAKEUP.equals(intent.getAction())) {
+				setWallpaper();
 			}
 		}
 
@@ -82,54 +88,20 @@ public class WallpaperService extends Service {
 
 	private void setWallpaper() {
 
-		if (needUpdateWallpaper()) {
+		mPosition = WallpaperSettings
+				.getWallpaperPosition(WallpaperService.this);
+		helper.selectWallpaper(mPosition);
 
-			mPosition = WallpaperSettings
-					.getWallpaperPosition(WallpaperService.this);
-			helper.selectWallpaper(mPosition);
-
-			if (mPosition < helper.getImages().size() - 1) {
-				mPosition++;
-
-			} else {
-				mPosition = 0;
-			}
-			WallpaperSettings.setWallpaperPosition(WallpaperService.this,
-					mPosition);
-			WallpaperSettings
-					.refreshLastWallpaperUpdateTime(WallpaperService.this);
-		}
-
-	}
-
-	public boolean needUpdateWallpaper() {
-		String lastUpdateTime = WallpaperSettings
-				.getLastWallpaperUpdateTime(WallpaperService.this);
-		if (lastUpdateTime != null && !"".equals(lastUpdateTime)) {
-
-			SimpleDateFormat formatter = new SimpleDateFormat(
-					"yyyy-MM-dd HH:mm:ss");
-			Date lastDate = null;
-			try {
-				lastDate = formatter.parse(lastUpdateTime);
-			} catch (ParseException e) {
-				e.printStackTrace();
-				return false;
-			}
-			Date nowDate = new Date(System.currentTimeMillis());
-			//long diff = nowDate.getTime() - lastDate.getTime();
-			//long days = diff / (1000 * 60 * 60 * 24);
-
-			if (nowDate.getYear() > lastDate.getYear()
-					|| nowDate.getMonth() > lastDate.getMonth()
-					|| nowDate.getDate() > lastDate.getDate()) {
-				return true;
-			}
-			return false;
+		if (mPosition < helper.getImages().size() - 1) {
+			mPosition++;
 
 		} else {
-			return true;
+			mPosition = 0;
 		}
+		WallpaperSettings
+				.setWallpaperPosition(WallpaperService.this, mPosition);
+		WallpaperSettings.refreshLastWallpaperUpdateTime(WallpaperService.this);
+
 	}
 
 }
