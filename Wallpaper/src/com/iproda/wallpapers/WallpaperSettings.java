@@ -1,13 +1,7 @@
 package com.iproda.wallpapers;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import android.content.Context;
 import android.provider.Settings;
-import android.text.format.DateFormat;
-import android.text.format.Time;
 
 public class WallpaperSettings {
 
@@ -46,17 +40,5 @@ public class WallpaperSettings {
 				"com.iproda.wallpapers.WALLPAPER_COL_COUNT", 0);
 	}
 
-	public static void refreshLastWallpaperUpdateTime(Context context) {
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date curDate = new Date(System.currentTimeMillis());
-		String nowTime = formatter.format(curDate);
-		Settings.System.putString(context.getContentResolver(),
-				"com.iproda.wallpapers.WALLPAPER_UPDATE_TIME", nowTime);
-	}
 
-	public static String getLastWallpaperUpdateTime(Context context) {
-
-		return Settings.System.getString(context.getContentResolver(),
-				"com.iproda.wallpapers.WALLPAPER_UPDATE_TIME");
-	}
 }

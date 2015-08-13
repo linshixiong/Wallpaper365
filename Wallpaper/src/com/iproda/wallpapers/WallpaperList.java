@@ -69,6 +69,8 @@ public class WallpaperList extends Activity implements
 						Toast.LENGTH_SHORT).show();
 			}
 		});
+		
+		Receiver.setAlarm(this);
 
 	}
 

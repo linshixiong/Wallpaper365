@@ -46,14 +46,13 @@ public class WallpaperHelper {
 	private void findWallpapers() {
 
 		final Resources resources = mContext.getResources();
-		final String packageName = mContext.getApplicationContext()
-				.getPackageName();
+		final String packageName = mContext.getApplicationContext().getPackageName();
 		final int arrayLength = resources.getStringArray(R.array.wallpapers).length;
 		mThumbs = new ArrayList<Integer>(arrayLength);
 		mImages = new ArrayList<Integer>(arrayLength);
 
 		addWallpapers(resources, packageName, R.array.wallpapers);
-		// addWallpapers(resources, packageName, R.array.extra_wallpapers);
+
 	}
 
 	private void addWallpapers(Resources resources, String packageName, int list) {
@@ -61,8 +60,7 @@ public class WallpaperHelper {
 		for (String extra : extras) {
 			int res = resources.getIdentifier(extra, "drawable", packageName);
 			if (res != 0) {
-				final int thumbRes = resources.getIdentifier(extra + "_small",
-						"drawable", packageName);
+				final int thumbRes = resources.getIdentifier(extra + "_small", "drawable", packageName);
 
 				if (thumbRes != 0) {
 					mThumbs.add(thumbRes);
@@ -73,11 +71,9 @@ public class WallpaperHelper {
 	}
 
 	@SuppressLint("NewApi")
-	protected Point getDefaultWallpaperSize(Resources res,
-			WindowManager windowManager) {
+	protected Point getDefaultWallpaperSize(Resources res, WindowManager windowManager) {
 		// Uses suggested size if available
-		WallpaperManager wallpaperManager = WallpaperManager
-				.getInstance(mContext);
+		WallpaperManager wallpaperManager = WallpaperManager.getInstance(mContext);
 		int suggestedWidth = wallpaperManager.getDesiredMinimumWidth();
 		int suggestedHeight = wallpaperManager.getDesiredMinimumHeight();
 		if (suggestedWidth != 0 && suggestedHeight != 0) {
@@ -104,8 +100,7 @@ public class WallpaperHelper {
 		// parallax effects
 		final int defaultWidth, defaultHeight;
 
-		defaultWidth = Math
-				.max((int) (minDim * WALLPAPER_SCREENS_SPAN), maxDim);
+		defaultWidth = Math.max((int) (minDim * WALLPAPER_SCREENS_SPAN), maxDim);
 		defaultHeight = maxDim;
 
 		return new Point(defaultWidth, defaultHeight);
@@ -139,20 +134,17 @@ public class WallpaperHelper {
 		// We solve for x and y and end up with a final formula:
 		final float x = (WALLPAPER_WIDTH_TO_SCREEN_RATIO_LANDSCAPE - WALLPAPER_WIDTH_TO_SCREEN_RATIO_PORTRAIT)
 				/ (ASPECT_RATIO_LANDSCAPE - ASPECT_RATIO_PORTRAIT);
-		final float y = WALLPAPER_WIDTH_TO_SCREEN_RATIO_PORTRAIT - x
-				* ASPECT_RATIO_PORTRAIT;
+		final float y = WALLPAPER_WIDTH_TO_SCREEN_RATIO_PORTRAIT - x * ASPECT_RATIO_PORTRAIT;
 		return x * aspectRatio + y;
 	}
 
-	protected RectF getMaxCropRect(int inWidth, int inHeight, int outWidth,
-			int outHeight, boolean leftAligned) {
+	protected RectF getMaxCropRect(int inWidth, int inHeight, int outWidth, int outHeight, boolean leftAligned) {
 		RectF cropRect = new RectF();
 		// Get a crop rect that will fit this
 		if (inWidth / (float) inHeight > outWidth / (float) outHeight) {
 			cropRect.top = 0;
 			cropRect.bottom = inHeight;
-			cropRect.left = (inWidth - (outWidth / (float) outHeight)
-					* inHeight) / 2;
+			cropRect.left = (inWidth - (outWidth / (float) outHeight) * inHeight) / 2;
 			cropRect.right = inWidth - cropRect.left;
 			if (leftAligned) {
 				cropRect.right -= cropRect.left;
@@ -169,12 +161,10 @@ public class WallpaperHelper {
 
 	protected void cropImageAndSetWallpaper(int resId) {
 		Point outSize = new Point(1024, 600);
-		final BitmapCropTask cropTask = new BitmapCropTask(mContext,
-				mContext.getResources(), resId, null, 0, outSize.x, outSize.y,
-				true, false, null);
+		final BitmapCropTask cropTask = new BitmapCropTask(mContext, mContext.getResources(), resId, null, 0, outSize.x,
+				outSize.y, true, false, null);
 		Point inSize = cropTask.getImageBounds();
-		final RectF crop = getMaxCropRect(inSize.x, inSize.y, outSize.x,
-				outSize.y, false);
+		final RectF crop = getMaxCropRect(inSize.x, inSize.y, outSize.x, outSize.y, false);
 		cropTask.setCropBounds(crop);
 		Runnable onEndCrop = new Runnable() {
 			@Override
@@ -199,24 +189,19 @@ public class WallpaperHelper {
 		}
 		editor.commit();
 
-		suggestWallpaperDimension(mContext.getResources(),
-				WallpaperManager.getInstance(mContext));
+		suggestWallpaperDimension(mContext.getResources(), WallpaperManager.getInstance(mContext));
 	}
 
-	public void suggestWallpaperDimension(Resources res,
-			final WallpaperManager wallpaperManager) {
+	public void suggestWallpaperDimension(Resources res, final WallpaperManager wallpaperManager) {
 		final Point defaultWallpaperSize = new Point(1024, 600);
 
 		new Thread("suggestWallpaperDimension") {
 			@Override
 			public void run() {
 				// If we have saved a wallpaper width/height, use that instead
-				int savedWidth = mPrefs.getInt(WALLPAPER_WIDTH_KEY,
-						defaultWallpaperSize.x);
-				int savedHeight = mPrefs.getInt(WALLPAPER_HEIGHT_KEY,
-						defaultWallpaperSize.y);
-				wallpaperManager.suggestDesiredDimensions(savedWidth,
-						savedHeight);
+				int savedWidth = mPrefs.getInt(WALLPAPER_WIDTH_KEY, defaultWallpaperSize.x);
+				int savedHeight = mPrefs.getInt(WALLPAPER_HEIGHT_KEY, defaultWallpaperSize.y);
+				wallpaperManager.suggestDesiredDimensions(savedWidth, savedHeight);
 			}
 		}.start();
 	}
