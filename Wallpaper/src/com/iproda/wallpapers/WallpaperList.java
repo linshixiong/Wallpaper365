@@ -68,9 +68,7 @@ public class WallpaperList extends Activity implements
 				Toast.makeText(WallpaperList.this, "onItemClick:+" + arg2,
 						Toast.LENGTH_SHORT).show();
 			}
-		});
-		
-		Receiver.setAlarm(this);
+		});	
 
 	}
 

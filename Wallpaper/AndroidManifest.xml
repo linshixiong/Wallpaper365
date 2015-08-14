@@ -39,6 +39,7 @@
         <receiver android:name="com.iproda.wallpapers.Receiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="com.iproda.wallpapers.ACTION_ALARM_WAKEUP" />
             </intent-filter>
         </receiver>
     </application>
