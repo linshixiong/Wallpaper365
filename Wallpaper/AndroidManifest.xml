@@ -27,7 +27,15 @@
                 <action android:name="com.iproda.wallpapers.WALLPAPER_COL" />
             </intent-filter>
         </activity>
-        <activity android:name="WallpaperItem" >
+        <activity
+            android:name="WallpaperItem"
+            android:screenOrientation="landscape" >
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="com.iproda.wallpapers.WALLPAPER_VIEW" />
+            </intent-filter>
         </activity>
 
         <service android:name="com.iproda.wallpapers.WallpaperService" >

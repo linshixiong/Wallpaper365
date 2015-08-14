@@ -31,7 +31,7 @@
             android:id="@+id/gallery"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:gravity="fill_vertical|fill_horizontal"
+            android:gravity="center"
             android:horizontalSpacing="5px"
             android:numColumns="4"
             android:stretchMode="columnWidth"

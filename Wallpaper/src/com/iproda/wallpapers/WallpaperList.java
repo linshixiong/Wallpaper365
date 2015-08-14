@@ -18,12 +18,8 @@ package com.iproda.wallpapers;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.AsyncTask;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,19 +30,14 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
-
+import android.widget.RelativeLayout;
 import com.iproda.wallpapers.R;
 
-public class WallpaperList extends Activity implements
-		GridView.OnItemClickListener {
+public class WallpaperList extends Activity {
 
 	private GridView mGallery;
 
 	private WallpaperHelper helper;
-	private Bitmap mBitmap;
-	private int mGalleryItemBackground;
-	private WallpaperLoader mLoader;
 
 	@Override
 	public void onCreate(Bundle icicle) {
@@ -58,17 +49,19 @@ public class WallpaperList extends Activity implements
 		setContentView(R.layout.wallpaper);
 
 		mGallery = (GridView) findViewById(R.id.gallery);
+		Drawable drawable = getResources().getDrawable(R.drawable.grid_selector_background);
+		mGallery.setSelector(drawable);
 		mGallery.setAdapter(new ImageAdapter(this));
 
-		mGallery.setOnItemClickListener(new GridView.OnItemClickListener() {
+		mGallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-				Toast.makeText(WallpaperList.this, "onItemClick:+" + arg2,
-						Toast.LENGTH_SHORT).show();
+			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+				Intent intent=new Intent("com.iproda.wallpapers.WALLPAPER_VIEW");
+				intent.putExtra("position", position);
+				startActivity(intent);
 			}
-		});	
+		});
 
 	}
 
@@ -93,18 +86,6 @@ public class WallpaperList extends Activity implements
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-
-		if (mLoader != null
-				&& mLoader.getStatus() != WallpaperLoader.Status.FINISHED) {
-			mLoader.cancel(true);
-			mLoader = null;
-		}
-	}
-
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		// TODO Auto-generated method stub
-		Toast.makeText(this, "onItemClick:+" + arg2, Toast.LENGTH_SHORT).show();
 	}
 
 	private class ImageAdapter extends BaseAdapter {
@@ -116,106 +97,37 @@ public class WallpaperList extends Activity implements
 
 		@Override
 		public int getCount() {
-			return WallpaperSettings
-					.getWallpaperCollectionCount(WallpaperList.this);
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return position;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
+			 return WallpaperSettings
+			 .getWallpaperCollectionCount(WallpaperList.this);
+			//return 365;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			ImageView image;
+			RelativeLayout layout;
 
 			if (convertView == null) {
-				image = (ImageView) mLayoutInflater.inflate(
-						R.layout.wallpaper_item, parent, false);
+				layout = (RelativeLayout) mLayoutInflater.inflate(R.layout.wallpaper_item, parent, false);
 			} else {
-				image = (ImageView) convertView;
+				layout = (RelativeLayout) convertView;
 			}
 
 			int thumbRes = helper.getThumbs().get(position);
+			ImageView image = (ImageView) layout.findViewById(R.id.image);
 			image.setImageResource(thumbRes);
-
-			// image.setAdjustViewBounds(false);
-
-			// image.setScaleType(ImageView.ScaleType.FIT_XY);
-
-			image.setBackgroundResource(mGalleryItemBackground);
-
-			Drawable thumbDrawable = image.getDrawable();
-			if (thumbDrawable != null) {
-				thumbDrawable.setDither(true);
-			} else {
-				Log.e("Paperless System", String.format(
-						"Error decoding thumbnail resId=%d for wallpaper #%d",
-						thumbRes, position));
-			}
-			return image;
-		}
-	}
-
-	class WallpaperLoader extends AsyncTask<Integer, Void, Bitmap> {
-		BitmapFactory.Options mOptions;
-
-		WallpaperLoader() {
-			mOptions = new BitmapFactory.Options();
-			mOptions.inDither = false;
-			mOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
+			return layout;
 		}
 
 		@Override
-		protected Bitmap doInBackground(Integer... params) {
-			if (isCancelled())
-				return null;
-			try {
-				return BitmapFactory.decodeResource(getResources(), helper
-						.getImages().get(params[0]), mOptions);
-			} catch (OutOfMemoryError e) {
-				return null;
-			}
+		public Object getItem(int arg0) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		@Override
-		protected void onPostExecute(Bitmap b) {
-			if (b == null)
-				return;
-
-			if (!isCancelled() && !mOptions.mCancel) {
-				// Help the GC
-				if (mBitmap != null) {
-					mBitmap.recycle();
-				}
-
-				// mInfoView.setText(getResources().getStringArray(R.array.info)[mGallery.getSelectedItemPosition()]);
-
-				// final ImageView view = mImageView;
-				// view.setImageBitmap(b);
-
-				mBitmap = b;
-
-				// final Drawable drawable = view.getDrawable();
-				// drawable.setFilterBitmap(true);
-				// drawable.setDither(true);
-
-				// view.postInvalidate();
-
-				mLoader = null;
-			} else {
-				b.recycle();
-			}
-		}
-
-		void cancel() {
-			mOptions.requestCancelDecode();
-			super.cancel(true);
+		public long getItemId(int arg0) {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 	}
 
