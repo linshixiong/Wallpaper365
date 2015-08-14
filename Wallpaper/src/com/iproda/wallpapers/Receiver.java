@@ -14,7 +14,7 @@ public class Receiver extends BroadcastReceiver {
 			service.putExtra("action", 1);
 			arg0.startService(service);
 		} else if (Intent.ACTION_BOOT_COMPLETED.equals(arg1.getAction())) {
-			Toast.makeText(arg0, "ACTION_BOOT_COMPLETED", Toast.LENGTH_LONG).show();
+			//Toast.makeText(arg0, "ACTION_BOOT_COMPLETED", Toast.LENGTH_LONG).show();
 			Intent service = new Intent("com.iproda.wallpapers.WALLPAPER_SERVICE");
 			service.putExtra("action", 2);
 			arg0.startService(service);

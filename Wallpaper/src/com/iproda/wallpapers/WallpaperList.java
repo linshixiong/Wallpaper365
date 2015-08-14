@@ -16,6 +16,7 @@
 
 package com.iproda.wallpapers;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -38,16 +39,15 @@ public class WallpaperList extends Activity {
 	private GridView mGallery;
 
 	private WallpaperHelper helper;
+	private boolean isWallpaperChangerOn;
 
 	@Override
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
 		helper = new WallpaperHelper(this);
 
 		setContentView(R.layout.wallpaper);
-
+		isWallpaperChangerOn = WallpaperSettings.isWallpaperChangerOn(this);
 		mGallery = (GridView) findViewById(R.id.gallery);
 		Drawable drawable = getResources().getDrawable(R.drawable.grid_selector_background);
 		mGallery.setSelector(drawable);
@@ -57,24 +57,38 @@ public class WallpaperList extends Activity {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-				Intent intent=new Intent("com.iproda.wallpapers.WALLPAPER_VIEW");
+				Intent intent = new Intent("com.iproda.wallpapers.WALLPAPER_VIEW");
 				intent.putExtra("position", position);
 				startActivity(intent);
 			}
 		});
 
+		/*
+		 * Intent service = new
+		 * Intent("com.iproda.wallpapers.WALLPAPER_SERVICE");
+		 * service.putExtra("action", 1); startService(service);
+		 */
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu, menu);
+		MenuItem item = menu.getItem(0);
+		item.setChecked(isWallpaperChangerOn);
+		item.setTitle(isWallpaperChangerOn ? R.string.swicther_on : R.string.swicther_off);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
+		if (id == R.id.switcher) {
+			item.setChecked(!item.isChecked());
 
+			isWallpaperChangerOn = item.isChecked();
+			WallpaperSettings.setWallpaperChangerOn(this, isWallpaperChangerOn);
+			item.setTitle(isWallpaperChangerOn ? R.string.swicther_on : R.string.swicther_off);
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -97,9 +111,8 @@ public class WallpaperList extends Activity {
 
 		@Override
 		public int getCount() {
-			 return WallpaperSettings
-			 .getWallpaperCollectionCount(WallpaperList.this);
-			//return 365;
+			return WallpaperSettings.getWallpaperCollectionCount(WallpaperList.this);
+			// return 365;
 		}
 
 		@Override

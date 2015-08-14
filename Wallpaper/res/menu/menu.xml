@@ -1,8 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/myswitch"
-        android:title=""
-        android:showAsAction="always"
-        android:actionLayout="@layout/switch_layout"
+        android:id="@+id/switcher"
+        android:title="@string/swicther_off"
+        android:checkable="true"
+        android:showAsAction="never"
     />   
 </menu>

@@ -12,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-import android.widget.Toast;
 
 public class WallpaperService extends Service {
 
@@ -60,8 +59,7 @@ public class WallpaperService extends Service {
 	public void setAlarm() {
 
 		Intent intent = new Intent(WallpaperService.ACTION_ALARM_WAKEUP);
-		PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 		Calendar calendar = Calendar.getInstance(Locale.getDefault());
 		calendar.setTimeInMillis(System.currentTimeMillis());
@@ -72,30 +70,28 @@ public class WallpaperService extends Service {
 		calendar.set(Calendar.MILLISECOND, 0);
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 
-		AlarmManager manager = (AlarmManager) this
-				.getSystemService(ALARM_SERVICE);
-		manager.set(AlarmManager.RTC_WAKEUP,
-				calendar.getTimeInMillis(), sender);
+		AlarmManager manager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
+		manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
 
 	}
 
 	private void setWallpaper() {
 
-		mPosition = WallpaperSettings
-				.getWallpaperPosition(WallpaperService.this);
-		WallpaperHelper helper = new WallpaperHelper(this);
-		helper.selectWallpaper(mPosition);
+		if (WallpaperSettings.isWallpaperChangerOn(this)) {
+			mPosition = WallpaperSettings.getWallpaperPosition(WallpaperService.this);
+			WallpaperHelper helper = new WallpaperHelper(this);
+			if (mPosition < helper.getImages().size() - 1) {
+				mPosition++;
 
-		if (mPosition < helper.getImages().size() - 1) {
-			mPosition++;
+			} else {
+				mPosition = 0;
+			}
 
-		} else {
-			mPosition = 0;
+			helper.selectWallpaper(mPosition);
+
+			WallpaperSettings.setWallpaperPosition(WallpaperService.this, mPosition);
+			setAlarm();
 		}
-		WallpaperSettings
-				.setWallpaperPosition(WallpaperService.this, mPosition);
-		Toast.makeText(this, "setWallpaper", Toast.LENGTH_LONG).show();
-		setAlarm();
 	}
 
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -104,7 +100,7 @@ public class WallpaperService extends Service {
 		public void onReceive(Context arg0, Intent arg1) {
 
 			if (Intent.ACTION_DATE_CHANGED.equals(arg1.getAction())) {
-				
+
 			}
 		}
 

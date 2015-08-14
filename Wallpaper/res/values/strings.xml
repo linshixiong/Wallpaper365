@@ -18,7 +18,7 @@
     <string name="app_name">Wallpaper 365</string>
     <string name="set_wallpaper">Set wallpaper</string>
     <string name="no_wallpaper">No wallpaper</string> 
-    <declare-styleable name="Gallery">
-	    <attr name="android:galleryItemBackground" />
-	</declare-styleable>
+	<string name="collection_mode">Collection Mode</string>
+	<string name="swicther_on">Auto Wallpaper ON</string>
+	<string name="swicther_off">Auto Wallpaper OFF</string>
 </resources>
