@@ -63,12 +63,12 @@ public class WallpaperList extends Activity {
 			}
 		});
 
-		/*
+		
 		  Intent service = new
 		  Intent("com.iproda.wallpapers.WALLPAPER_SERVICE");
 		  service.putExtra("action", 1);
 		  startService(service);
-		 */
+		 
 		 
 	}
 
