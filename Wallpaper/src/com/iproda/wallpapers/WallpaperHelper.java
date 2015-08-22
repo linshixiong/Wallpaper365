@@ -58,8 +58,19 @@ public class WallpaperHelper {
 			}
 		}
 	}
+	public void selectWallpaperResource(int resource) {
+		wallpaperManager.suggestDesiredDimensions(1024, 600);
 
+		try {
+			wallpaperManager.setResource(resource);
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+	}
 	public void selectWallpaper(int position) {
+		selectWallpaperResource(mImages.get(position));
+		/*
 		wallpaperManager.suggestDesiredDimensions(1024, 600);
 
 		try {
@@ -67,7 +78,7 @@ public class WallpaperHelper {
 		} catch (IOException e) {
 
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 }

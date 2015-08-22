@@ -10,8 +10,12 @@ import java.util.TimeZone;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
+import android.widget.Toast;
 
 public class WallpaperService extends Service {
 
@@ -36,12 +40,34 @@ public class WallpaperService extends Service {
 				PendingIntent.FLAG_UPDATE_CURRENT);
 
 		manager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
+
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(Intent.ACTION_TIME_CHANGED);
+		filter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+		this.registerReceiver(receiver, filter);
 	}
+
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context arg0, Intent arg1) {
+			String action = arg1.getAction();
+
+			if (Intent.ACTION_TIME_CHANGED.equals(action)
+					|| Intent.ACTION_TIMEZONE_CHANGED.equals(action)) {
+
+				setAlarm();
+			}
+
+		}
+
+	};
 
 	@Override
 	public void onDestroy() {
 
 		super.onDestroy();
+		this.unregisterReceiver(receiver);
 	}
 
 	@Override
@@ -57,15 +83,11 @@ public class WallpaperService extends Service {
 			if (needUpdateWallpaper()) {
 				setWallpaper();
 			}
-
 		case 3:
-			setAlarm();
-			break;
-		case 4:
 			calcelAlarm();
 			break;
-		case 5:
-			refreshWallpaper();
+		case 4:
+			setAlarm();
 			break;
 		}
 
@@ -89,18 +111,6 @@ public class WallpaperService extends Service {
 
 	public void calcelAlarm() {
 		manager.cancel(sender);
-	}
-
-	private void refreshWallpaper() {
-		mPosition = WallpaperSettings
-				.getWallpaperPosition(WallpaperService.this);
-		if (mPosition == -1) {
-			mPosition = 0;
-		}
-		WallpaperHelper helper = new WallpaperHelper(this);
-
-		helper.selectWallpaper(mPosition);
-
 	}
 
 	private void setWallpaper() {
@@ -128,6 +138,8 @@ public class WallpaperService extends Service {
 	}
 
 	public boolean needUpdateWallpaper() {
+
+
 		String lastUpdateTime = WallpaperSettings
 				.getLastWallpaperUpdateTime(WallpaperService.this);
 		if (lastUpdateTime != null && !"".equals(lastUpdateTime)) {
@@ -151,7 +163,9 @@ public class WallpaperService extends Service {
 			return false;
 
 		} else {
-			return true;
+			WallpaperSettings
+					.refreshLastWallpaperUpdateTime(WallpaperService.this);
+			return false;
 		}
 	}
 

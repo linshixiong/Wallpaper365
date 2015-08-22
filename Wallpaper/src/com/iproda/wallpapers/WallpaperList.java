@@ -16,7 +16,6 @@
 
 package com.iproda.wallpapers;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -26,13 +25,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import com.iproda.wallpapers.R;
+
 
 public class WallpaperList extends Activity {
 
@@ -61,14 +59,7 @@ public class WallpaperList extends Activity {
 				intent.putExtra("position", position);
 				startActivity(intent);
 			}
-		});
-
-		
-		  Intent service = new
-		  Intent("com.iproda.wallpapers.WALLPAPER_SERVICE");
-		  service.putExtra("action", 1);
-		  startService(service);
-		 
+		});		 
 		 
 	}
 
@@ -90,6 +81,16 @@ public class WallpaperList extends Activity {
 			isWallpaperChangerOn = item.isChecked();
 			WallpaperSettings.setWallpaperChangerOn(this, isWallpaperChangerOn);
 			item.setTitle(isWallpaperChangerOn ? R.string.swicther_on : R.string.swicther_off);
+			
+			if(!isWallpaperChangerOn){
+				WallpaperHelper helper=new WallpaperHelper(this);
+				helper.selectWallpaperResource(com.android.internal.R.drawable.default_wallpaper);
+				
+			}
+			//Intent service = new Intent("com.iproda.wallpapers.WALLPAPER_SERVICE");
+			//service.putExtra("action", isWallpaperChangerOn?4:3);
+			//this.startService(service);
+			
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -114,7 +115,6 @@ public class WallpaperList extends Activity {
 		@Override
 		public int getCount() {
 			return WallpaperSettings.getWallpaperCollectionCount(WallpaperList.this);
-			// return 365;
 		}
 
 		@Override
@@ -135,13 +135,11 @@ public class WallpaperList extends Activity {
 
 		@Override
 		public Object getItem(int arg0) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public long getItemId(int arg0) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 	}
